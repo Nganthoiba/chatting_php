@@ -15,63 +15,25 @@
 	.chat-input{border: 1px solid #ffdddd;border-top: 0px;width: 100%;box-sizing: border-box;padding: 10px 8px;color: #191919;
 	}
 	</style>	
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-	<script>  
-	var domain = "ws://192.168.137.1:8085/chattingPHP/php-socket.php";
-	var websocket = null;
-	function showMessage(messageHTML) {
-		$('#chat-box').append(messageHTML);
-	}
-
-	$(document).ready(function(){
-		connect();
-		$('#frmChat').on("submit",function(event){
-			event.preventDefault();
-			$('#chat-user').attr("type","hidden");		
-			var messageJSON = {
-				chat_user: $('#chat-user').val(),
-				chat_message: $('#chat-message').val()
-			};
-			websocket.send(JSON.stringify(messageJSON));
-			$("#current_user").html(messageJSON.chat_user);
-		});
-	});
-	
-	function connect(){
-		if(websocket != null){
-			return;
-		}
-		try{
-			websocket = new WebSocket(domain); 
-		
-			websocket.onopen = function(event) { 
-				showMessage("<div class='chat-connection-ack'>Connection is established!</div>");		
-			}
-			websocket.onmessage = function(event) {
-				var Data = JSON.parse(event.data);
-				showMessage("<div class='"+Data.message_type+"'>"+Data.message+"</div>");
-				$('#chat-message').val('');
-				console.log(Data);
-			};
-			
-			websocket.onerror = function(event){
-				showMessage("<div class='error'>Problem due to some errors</div>");
-				websocket = null;
-			};
-			websocket.onclose = function(event){
-				showMessage("<div class='chat-connection-ack'>Connection Closed <button onclick='connect();'>Reconnect</button></div>");
-				websocket = null;
-			}; 
-		}
-		catch(e){
-			console.log("Socket Error: \n");
-			console.log(e);
-		}
-	}
-
-	</script>
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 	</head>
 	<body>
+		<fieldset>
+			<legend>Socket connection form</legend>
+			<form name="connect_socket_form">
+				<div>
+					<label for="server_address">Domain/IP Address:</label>
+					<input type="text" name="server_address" id="server_address" value="<?= $_SERVER['HTTP_REFERER']??'192.168.137.1' ?>" required/>
+				</div>
+				<div>
+					<label for="port_number">Port Number:</label>
+					<input type="text" name="port_number" id="port_number" value="8085" required/>
+				</div>
+				<div>
+					<button type="submit">Connect Socket</button>
+				</div>
+			</form>
+		</fieldset>
 		<form name="frmChat" id="frmChat">
 			<strong>User:</strong> <span id="current_user"></span>
 			<div id="chat-box"></div>
@@ -80,4 +42,68 @@
 			<input type="submit" id="btnSend" name="send-chat-message" value="Send" >
 		</form>
 	</body>
+	
+	<script>
+		var websocket = null;
+		function showMessage(messageHTML) {
+			$('#chat-box').append(messageHTML);
+		}
+
+		$(document).ready(function(){
+			//connect(domain);
+			$('#frmChat').on("submit",function(event){
+				event.preventDefault();
+				$('#chat-user').attr("type","hidden");		
+				var messageJSON = {
+					chat_user: $('#chat-user').val(),
+					chat_message: $('#chat-message').val()
+				};
+				websocket.send(JSON.stringify(messageJSON));
+				$("#current_user").html(messageJSON.chat_user);
+			});
+		});
+		document.forms['connect_socket_form'].onsubmit = function(event){
+			event.preventDefault();
+			let domain = `ws://${this.server_address.value}:${this.port_number.value}/chattingPHP/php-socket.php`;
+			connect(domain);
+		};
+		
+		function reconnect(){
+			let connect_socket_form = document.forms['connect_socket_form'];
+			let domain = `ws://${connect_socket_form.server_address.value}:${connect_socket_form.port_number.value}/chattingPHP/php-socket.php`;
+			connect(domain);
+		}
+		
+		function connect(domain){
+			if(websocket != null){
+				return;
+			}
+			try{
+				websocket = new WebSocket(domain); 
+			
+				websocket.onopen = function(event) { 
+					showMessage("<div class='chat-connection-ack'>Connection is established!</div>");		
+				}
+				websocket.onmessage = function(event) {
+					var Data = JSON.parse(event.data);
+					showMessage("<div class='"+Data.message_type+"'>"+Data.message+"</div>");
+					$('#chat-message').val('');
+					console.log(Data);
+				};
+				
+				websocket.onerror = function(event){
+					showMessage("<div class='error'>Problem due to some errors</div>");
+					websocket = null;
+				};
+				websocket.onclose = function(event){
+					showMessage("<div class='chat-connection-ack'>Connection Closed <button type='button' onclick='reconnect();'>Reconnect</button></div>");
+					websocket = null;
+				}; 
+			}
+			catch(e){
+				console.log("Socket Error: \n");
+				console.log(e);
+			}
+		}
+	</script>
 </html>

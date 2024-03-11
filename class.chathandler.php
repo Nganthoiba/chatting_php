@@ -64,7 +64,16 @@ class ChatHandler {
 		"WebSocket-Origin: $host_name\r\n" .
 		"WebSocket-Location: ws://$host_name:$port/chattingPHP/shout.php\r\n".
 		"Sec-WebSocket-Accept:$secAccept\r\n\r\n";
-		socket_write($client_socket_resource,$buffer,strlen($buffer));
+		//socket_write($client_socket_resource,$buffer,strlen($buffer));
+		
+		$request = 'HTTP/1.1 101 Web Socket Protocol Handshake' . "\r\n" .
+        "Upgrade: websocket\r\n" .
+		"Connection: Upgrade\r\n" .
+		"WebSocket-Origin: $host_name\r\n" .
+		"WebSocket-Location: ws://$host_name:$port/chattingPHP/shout.php\r\n".
+		"Sec-WebSocket-Accept:$secAccept\r\n".
+		"\r\n";
+		socket_write($client_socket_resource,$request,strlen($request));
 	}
 	
 	function newConnectionACK($client_ip_address) {
