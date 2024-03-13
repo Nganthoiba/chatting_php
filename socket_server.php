@@ -8,7 +8,7 @@ set_time_limit(0);
  * mientras llega. */
 ob_implicit_flush();
 
-$address = '192.168.137.1';
+$address = '192.168.230.47';
 $port = 8086;
 $write = NULL;
 $except = NULL;
@@ -50,10 +50,7 @@ do {
         }
         $clients[] = $msgsock;
         $key = array_keys($clients, $msgsock);
-        /* Enviar instrucciones. 
-        $msg = "\nBienvenido al Servidor De Prueba de PHP. \n" .
-        "Usted es el cliente numero: {$key[0]}\n" .
-        "Para salir, escriba 'quit'. Para cerrar el servidor escriba 'shutdown'.\n";*/
+        
 		
 		$msg = "\nHello! Welcome to chat application.\n";
         socket_write($msgsock, $msg, strlen($msg));

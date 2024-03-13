@@ -7,7 +7,7 @@ echo "<h2>TCP/IP Connection</h2>\n";
 $service_port = 8086;//getservbyname('www', 'tcp');
 
 /* Get the IP address for the target host. */
-$address = '192.168.137.1';//gethostbyname('www.example.com');
+$address = '192.168.230.47';//gethostbyname('www.example.com');
 
 /* Create a TCP/IP socket. */
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -26,7 +26,7 @@ if ($result === false) {
 }
 
 $in = "HEAD / HTTP/1.1\r\n";
-$in .= "Host: 192.168.137.1\r\n";
+$in .= "Host: {$address}\r\n";
 $in .= "Connection: Close\r\n\r\n";
 $out = '';
 
