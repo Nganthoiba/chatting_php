@@ -96,8 +96,9 @@ class ChatHandler {
 		$this->send($ack);
 	}
 
-	function createSocketMessage($message){
-		return $this->seal($message);
+	function sendMessage($message){
+		$socketMessage = $this->seal($message);
+		$this->send($socketMessage);
 	}
 }
 ?>
