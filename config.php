@@ -1,3 +1,27 @@
 <?php 
-define('HOST_NAME',"192.168.223.47"); 
-define('PORT',8086);
+//By default
+$config = [
+    '--host' => '10.178.30.50',
+    '--port' => 8080
+];
+
+//$config = [];
+
+//however if argument is supplied at command line
+$sizeOfArgv = sizeof($argv);
+if($sizeOfArgv > 1){
+    for($i = 1; $i < $sizeOfArgv; $i++){
+        $argument = explode('=', $argv[$i]);
+        $key = $argument[0];
+        $value = $argument[1];
+
+        /* $config[] = [
+            $argument[0] => $argument[1]
+        ]; */
+
+        $config[$key] = $value;
+    }
+}
+
+define('HOST_NAME',$config['--host']); 
+define('PORT',$config['--port']);
