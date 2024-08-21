@@ -53,7 +53,7 @@ include_once('config.php');
 		var connect_socket_form = document.forms['connect_socket_form'];
 		connect_socket_form.onsubmit = function(event){
 			event.preventDefault();	
-			let domain = `ws://${this.server_address.value}:${this.port_number.value}/chattingPHP/server.php`;
+			let domain = `ws://${this.server_address.value}:${this.port_number.value}/chattingphp/server.php`;
 			connect(domain);			
 		}
 		document.forms['message_form'].onsubmit = function(event){
