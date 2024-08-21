@@ -77,6 +77,7 @@ include_once('config.php');
 				websocket.onopen = function(event) { 
 					document.querySelector("#connection_status").innerHTML = "Connection is established!";	
 				}
+
 				websocket.onmessage = function(event) {
 					showMessage(event.data);
 				};
@@ -88,6 +89,8 @@ include_once('config.php');
 				};
 				websocket.onclose = function(event){
 					document.querySelector("#connection_status").innerHTML = "Connection closed, click connect button to start communication.";
+					console.log("Connection closed....");
+					console.log(event);
 					websocket = null;
 				}; 
 			}

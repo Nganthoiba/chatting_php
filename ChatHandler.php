@@ -62,6 +62,16 @@ class ChatHandler {
 			}
 		}
 
+		if(!isset($headers['Sec-WebSocket-Key'])){
+			$messageArray = [
+				'message'=>'Missing websocket key',
+				'message_type'=>'connection-error'
+			];
+			$ack = $this->seal(json_encode($messageArray));
+			$this->send($ack);
+			return;
+		}
+
 		$secKey = $headers['Sec-WebSocket-Key'];
 		$secAccept = base64_encode(pack('H*', sha1($secKey . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')));
 		$request = 'HTTP/1.1 101 Web Socket Protocol Handshake' . "\r\n" .
